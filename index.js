@@ -24,6 +24,8 @@ const fahhCountEl = document.getElementById("fahhCount");
 const accuracyEl = document.getElementById("accuracy");
 
 let input = "";
+let cursorIndex = 0;
+
 let history = JSON.parse(localStorage.getItem("fahhHistory")) || [];
 let totalCalcs = Number(localStorage.getItem("totalCalcs")) || 0;
 let fahhCount = Number(localStorage.getItem("fahhCount")) || 0;
@@ -37,6 +39,7 @@ if (localStorage.getItem("theme") === "dark") {
 }
 
 soundBtn.textContent = soundOn ? "🔊" : "🔇";
+renderExpression();
 renderHistory();
 updateStats();
 
@@ -49,15 +52,34 @@ function handleInput(key) {
 
   if (key === "AC") {
     input = "";
-    expression.textContent = "";
+    cursorIndex = 0;
     result.textContent = "0";
+    renderExpression();
     return;
   }
 
   if (key === "DEL") {
-    input = input.slice(0, -1);
-    expression.textContent = format(input);
+    if (cursorIndex > 0) {
+      input =
+        input.slice(0, cursorIndex - 1) +
+        input.slice(cursorIndex);
+      cursorIndex--;
+    }
+
     if (!input) result.textContent = "0";
+    renderExpression();
+    return;
+  }
+
+  if (key === "LEFT") {
+    if (cursorIndex > 0) cursorIndex--;
+    renderExpression();
+    return;
+  }
+
+  if (key === "RIGHT") {
+    if (cursorIndex < input.length) cursorIndex++;
+    renderExpression();
     return;
   }
 
@@ -66,8 +88,29 @@ function handleInput(key) {
     return;
   }
 
-  input += key;
-  expression.textContent = format(input);
+  insertText(key);
+}
+
+function insertText(text) {
+  input =
+    input.slice(0, cursorIndex) +
+    text +
+    input.slice(cursorIndex);
+
+  cursorIndex += text.length;
+  renderExpression();
+}
+
+function renderExpression() {
+  if (!input) {
+    expression.innerHTML = "";
+    return;
+  }
+
+  const before = format(input.slice(0, cursorIndex));
+  const after = format(input.slice(cursorIndex));
+
+  expression.innerHTML = `${before}<span class="custom-cursor"></span>${after}`;
 }
 
 function calculate() {
@@ -100,6 +143,8 @@ function calculate() {
     updateStats();
 
     input = String(answer);
+    cursorIndex = input.length;
+    renderExpression();
   } catch {
     showFahh();
   }
@@ -107,7 +152,8 @@ function calculate() {
 
 function showFahh() {
   result.classList.add("error-text");
-  result.textContent = fahhMessages[Math.floor(Math.random() * fahhMessages.length)];
+  result.textContent =
+    fahhMessages[Math.floor(Math.random() * fahhMessages.length)];
 
   fahhCount++;
   saveData();
@@ -145,34 +191,45 @@ functionButtons.forEach((btn) => {
 function addFunction(func) {
   result.classList.remove("error-text");
 
-  if (func === "sqrt") input += "Math.sqrt(";
-  if (func === "square") input += "**2";
-  if (func === "power") input += "**";
-  if (func === "sin") input += "Math.sin(";
-  if (func === "cos") input += "Math.cos(";
-  if (func === "tan") input += "Math.tan(";
-  if (func === "log") input += "Math.log10(";
-  if (func === "ln") input += "Math.log(";
-  if (func === "pi") input += "Math.PI";
-  if (func === "e") input += "Math.E";
+  if (func === "sqrt") insertText("Math.sqrt(");
+  if (func === "square") insertText("**2");
+  if (func === "power") insertText("**");
+  if (func === "sin") insertText("Math.sin(");
+  if (func === "cos") insertText("Math.cos(");
+  if (func === "tan") insertText("Math.tan(");
+  if (func === "log") insertText("Math.log10(");
+  if (func === "ln") insertText("Math.log(");
+  if (func === "pi") insertText("Math.PI");
+  if (func === "e") insertText("Math.E");
 
   if (func === "paren") {
     const open = (input.match(/\(/g) || []).length;
     const close = (input.match(/\)/g) || []).length;
-    input += open > close ? ")" : "(";
+    insertText(open > close ? ")" : "(");
   }
 
   if (func === "fact") {
-    const match = input.match(/(\d+)$/);
+    const leftSide = input.slice(0, cursorIndex);
+    const match = leftSide.match(/(\d+)$/);
+
     if (!match) return showFahh();
 
     const num = Number(match[0]);
+
     if (num < 0 || num > 20) return showFahh();
 
-    input = input.slice(0, -match[0].length) + factorial(num);
-  }
+    const fact = String(factorial(num));
 
-  expression.textContent = format(input);
+    input =
+      input.slice(0, cursorIndex - match[0].length) +
+      fact +
+      input.slice(cursorIndex);
+
+    cursorIndex =
+      cursorIndex - match[0].length + fact.length;
+
+    renderExpression();
+  }
 }
 
 function factorial(n) {
@@ -185,7 +242,10 @@ copyBtn.addEventListener("click", async () => {
   try {
     await navigator.clipboard.writeText(result.textContent);
     copyBtn.textContent = "Copied ✓";
-    setTimeout(() => copyBtn.textContent = "📋 Copy Result", 1200);
+
+    setTimeout(() => {
+      copyBtn.textContent = "📋 Copy Result";
+    }, 1200);
   } catch {
     copyBtn.textContent = "Copy Failed";
   }
@@ -235,6 +295,7 @@ clearHistory.addEventListener("click", () => {
   history = [];
   totalCalcs = 0;
   fahhCount = 0;
+
   saveData();
   renderHistory();
   updateStats();
@@ -256,7 +317,8 @@ function updateStats() {
   fahhCountEl.textContent = fahhCount;
 
   const total = totalCalcs + fahhCount;
-  const accuracy = total === 0 ? 100 : Math.round((totalCalcs / total) * 100);
+  const accuracy =
+    total === 0 ? 100 : Math.round((totalCalcs / total) * 100);
 
   accuracyEl.textContent = `${accuracy}%`;
 }
@@ -273,5 +335,7 @@ document.addEventListener("keydown", (e) => {
   if (allowed.includes(e.key)) handleInput(e.key);
   if (e.key === "Enter") handleInput("=");
   if (e.key === "Backspace") handleInput("DEL");
+  if (e.key === "ArrowLeft") handleInput("LEFT");
+  if (e.key === "ArrowRight") handleInput("RIGHT");
   if (e.key === "Escape") handleInput("AC");
 });
