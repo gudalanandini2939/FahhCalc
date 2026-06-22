@@ -55,37 +55,19 @@ function handleInput(key) {
   }
 
   if (key === "DEL") {
-    document.execCommand("delete");
-    input = getRawInput();
+    input = input.slice(0, -1);
+    expression.textContent = format(input);
     if (!input) result.textContent = "0";
     return;
   }
 
   if (key === "=") {
-    input = getRawInput();
     calculate();
     return;
   }
 
-  const displayKey = key
-    .replace("*", "×")
-    .replace("/", "÷");
-
-  insertAtCursor(displayKey);
-  input = getRawInput();
-}
-
-function insertAtCursor(text) {
-  expression.focus();
-  document.execCommand("insertText", false, text);
-}
-
-function getRawInput() {
-  return expression.textContent
-    .replace(/×/g, "*")
-    .replace(/÷/g, "/")
-    .replace(/π/g, "Math.PI")
-    .replace(/√/g, "Math.sqrt");
+  input += key;
+  expression.textContent = format(input);
 }
 
 function calculate() {
