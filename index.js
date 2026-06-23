@@ -2,7 +2,7 @@ const expression = document.getElementById("expression");
 const result = document.getElementById("result");
 const calculator = document.getElementById("calculator");
 
-const buttons = document.querySelectorAll(".keys button");
+const buttons = document.querySelectorAll(".keys button, .cursor-actions button");
 const functionButtons = document.querySelectorAll(".func-grid button");
 
 const copyBtn = document.getElementById("copyBtn");

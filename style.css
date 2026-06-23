@@ -474,3 +474,19 @@ body.dark{
 #expression:empty::before{
   content:"";
 }
+
+.cursor-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-bottom:12px;
+}
+
+.cursor-actions button{
+  border:0;
+  padding:10px;
+  border-radius:999px;
+  background:rgba(255,255,255,.65);
+  font-weight:800;
+  cursor:pointer;
+}
