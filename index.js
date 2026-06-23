@@ -1,5 +1,6 @@
 const expression = document.getElementById("expression");
 const result = document.getElementById("result");
+const successMsg = document.getElementById("successMsg");
 const calculator = document.getElementById("calculator");
 
 const buttons = document.querySelectorAll(".keys button, .cursor-actions button");
@@ -128,6 +129,7 @@ function calculate() {
     answer = Number.isInteger(answer) ? answer : Number(answer.toFixed(6));
 
     result.textContent = answer;
+    showSuccess();
 
     if (answer === 69 || answer === 420) {
       setTimeout(() => {
@@ -339,3 +341,23 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "ArrowRight") handleInput("RIGHT");
   if (e.key === "Escape") handleInput("AC");
 });
+
+function showSuccess(){
+  result.classList.add("success-glow");
+  const msgs = [
+  "NOICE 😎",
+  "Perfect ✨",
+  "Well Done 🔥",
+  "Math Master 🧠",
+  "Smooth 😌"
+];
+
+successMsg.textContent =
+  msgs[Math.floor(Math.random() * msgs.length)];
+  successMsg.classList.add("show");
+
+  setTimeout(() => {
+    result.classList.remove("success-glow");
+    successMsg.classList.remove("show");
+  }, 900);
+}

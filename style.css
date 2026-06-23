@@ -507,3 +507,31 @@ body.dark{
   0%,45%{opacity:1;}
   46%,100%{opacity:0;}
 }
+
+#successMsg{
+  height:22px;
+  margin:6px 0 10px;
+  text-align:center;
+  font-size:.9rem;
+  font-weight:800;
+  color:#fb8500;
+  opacity:0;
+  transition:.3s;
+}
+
+#successMsg.show{
+  opacity:1;
+}
+
+.success-glow{
+  text-shadow:
+    0 0 12px rgba(251,133,0,.8),
+    0 0 24px rgba(236,72,153,.55);
+  animation:popAnswer .35s ease;
+}
+
+@keyframes popAnswer{
+  0%{transform:scale(1);}
+  50%{transform:scale(1.08);}
+  100%{transform:scale(1);}
+}
