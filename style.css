@@ -490,3 +490,20 @@ body.dark{
   font-weight:800;
   cursor:pointer;
 }
+
+.custom-cursor{
+  display:inline-block;
+  width:3px;
+  height:22px;
+  background:#ff006e;
+  margin:0 3px;
+  border-radius:5px;
+  vertical-align:-4px;
+  box-shadow:0 0 8px rgba(255,0,110,.8);
+  animation:blink .7s infinite;
+}
+
+@keyframes blink{
+  0%,45%{opacity:1;}
+  46%,100%{opacity:0;}
+}
