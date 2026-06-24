@@ -20,9 +20,20 @@
         <h1>FahhCalc</h1>
 
         <div class="top-actions">
-          <button id="soundBtn" title="Sound">🔊</button>
-          <button id="historyBtn" title="History">🕘</button>
+          <button id="soundBtn">🔊</button>
+          <button id="gameMenuBtn">🏆</button>
+          <button id="historyBtn">🕘</button>
         </div>
+      </div>
+
+      <div class="mode-switch">
+        <button id="calcModeBtn" class="active">🧮 Calculator</button>
+        <button id="quizModeBtn">🎮 Quiz</button>
+      </div>
+
+      <div id="playStatus" class="play-status hidden">
+        <span id="livesDisplay">❤️❤️❤️❤️❤️</span>
+        <span id="timerDisplay" class="hidden">⏱️ <b id="timeLeft">30</b>s</span>
       </div>
 
       <div class="screen">
@@ -31,6 +42,11 @@
       </div>
 
       <div id="successMsg"></div>
+
+      <div id="quizBox" class="quiz-box hidden">
+        <p id="questionInfo">Choose the correct answer 👇</p>
+        <div id="answerOptions" class="answer-options"></div>
+      </div>
 
       <button id="copyBtn" class="copy">📋 Copy Result</button>
 
@@ -82,19 +98,75 @@
         <button data-func="sqrt">√<small>Root</small></button>
         <button data-func="square">x²<small>Square</small></button>
         <button data-func="power">xʸ<small>Power</small></button>
-
         <button data-func="sin">sin<small>Sine</small></button>
         <button data-func="cos">cos<small>Cos</small></button>
         <button data-func="tan">tan<small>Tan</small></button>
-
         <button data-func="log">log<small>Base 10</small></button>
         <button data-func="ln">ln<small>Natural</small></button>
         <button data-func="fact">!<small>Factorial</small></button>
-
         <button data-func="paren">( )<small>Bracket</small></button>
         <button data-func="pi">π<small>Pi</small></button>
         <button data-func="e">e<small>Euler</small></button>
       </div>
+    </section>
+
+    <section class="panel game-panel" id="gamePanel">
+      <div class="panel-head">
+        <h2>Game Menu</h2>
+        <button id="closeGame">×</button>
+      </div>
+
+      <div class="game-best">
+        🏆 Best Score: <span id="highScore">0</span>
+      </div>
+
+      <div class="game-section">
+        <h3>🎚️ Difficulty</h3>
+        <div class="difficulty-grid">
+          <button class="difficulty-btn active" data-level="easy">Easy</button>
+          <button class="difficulty-btn" data-level="medium">Medium</button>
+          <button class="difficulty-btn" data-level="hard">Hard</button>
+        </div>
+      </div>
+
+      <div class="game-section">
+        <h3>🏆 Challenge Mode</h3>
+        <div class="challenge-grid">
+          <button data-challenge="5">5 Questions</button>
+          <button data-challenge="10">10 Questions</button>
+          <button data-challenge="20">20 Questions</button>
+          <button data-challenge="50">50 Questions</button>
+        </div>
+      </div>
+
+      <div class="game-section">
+        <h3>⏱️ Time Challenge</h3>
+        <div class="challenge-grid">
+          <button data-time="30">30 Seconds</button>
+          <button data-time="45">45 Seconds</button>
+          <button data-time="60">1 Minute</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel result-panel" id="resultPanel">
+      <div class="panel-head">
+        <h2>Challenge Complete 🎉</h2>
+        <button id="closeResult">×</button>
+      </div>
+
+      <div class="result-summary">
+        <div><h3 id="finalCorrect">0</h3><p>Correct</p></div>
+        <div><h3 id="finalWrong">0</h3><p>Wrong</p></div>
+        <div><h3 id="finalAccuracy">0%</h3><p>Accuracy</p></div>
+      </div>
+
+      <div class="hearts-result">
+        <p>Lives Left</p>
+        <h3 id="finalLives">❤️❤️❤️❤️❤️</h3>
+      </div>
+
+      <button id="playAgainBtn" class="play-again">Play Again</button>
     </section>
 
     <section class="panel history-panel" id="historyPanel">
@@ -105,18 +177,9 @@
       </div>
 
       <div class="stats">
-        <div>
-          <h3 id="totalCalcs">0</h3>
-          <p>Calculations</p>
-        </div>
-        <div>
-          <h3 id="fahhCount">0</h3>
-          <p>Fahh Moments</p>
-        </div>
-        <div>
-          <h3 id="accuracy">100%</h3>
-          <p>Accuracy</p>
-        </div>
+        <div><h3 id="totalCalcs">0</h3><p>Calculations</p></div>
+        <div><h3 id="fahhCount">0</h3><p>Fahh Moments</p></div>
+        <div><h3 id="accuracy">100%</h3><p>Accuracy</p></div>
       </div>
 
       <div id="historyList">
@@ -126,6 +189,8 @@
   </main>
 
   <audio id="errorSound" src="fahh.mp3" preload="auto"></audio>
+  <audio id="correctSound" src="correct.mp3" preload="auto"></audio>
+
   <script src="index.js"></script>
 </body>
 </html>
