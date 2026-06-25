@@ -4,9 +4,7 @@ const successMsg = document.getElementById("successMsg");
 const calculator = document.getElementById("calculator");
 
 const buttons = document.querySelectorAll(".keys button, .cursor-actions button");
-const functionButtons = document.querySelectorAll(".func-grid button");
 
-const copyBtn = document.getElementById("copyBtn");
 const soundBtn = document.getElementById("soundBtn");
 const themeSmall = document.getElementById("themeSmall");
 
@@ -16,16 +14,9 @@ const closeHistory = document.getElementById("closeHistory");
 const clearHistory = document.getElementById("clearHistory");
 const historyList = document.getElementById("historyList");
 
-const moreSmall = document.getElementById("moreSmall");
-const morePanel = document.getElementById("morePanel");
-const closeMore = document.getElementById("closeMore");
-
 const gameMenuBtn = document.getElementById("gameMenuBtn");
 const gamePanel = document.getElementById("gamePanel");
 const closeGame = document.getElementById("closeGame");
-
-const calcModeBtn = document.getElementById("calcModeBtn");
-const quizModeBtn = document.getElementById("quizModeBtn");
 
 const playStatus = document.getElementById("playStatus");
 const livesDisplay = document.getElementById("livesDisplay");
@@ -58,11 +49,9 @@ const correctSound = document.getElementById("correctSound");
 
 let input = "";
 let cursorIndex = 0;
-let quizMode = false;
 let correctAnswer = null;
 
 let difficulty = "easy";
-
 let challengeActive = false;
 let timerActive = false;
 
@@ -84,9 +73,11 @@ let soundOn = localStorage.getItem("soundOn") !== "false";
 const fahhMessages = ["FAHH!", "Oops 😭", "Try Again!", "Almost!"];
 const successMessages = ["NOICE 😎", "Perfect ✨", "Well Done 🔥", "Math Master 🧠"];
 
+document.body.classList.add("quiz-mode");
+
 if (localStorage.getItem("theme") === "dark") {
   document.body.classList.add("dark");
-  themeSmall.textContent = "☀️ Light";
+  themeSmall.textContent = "☀️";
 }
 
 soundBtn.textContent = soundOn ? "🔊" : "🔇";
@@ -108,16 +99,19 @@ function handleInput(key) {
     resetInput();
     quizBox.classList.add("hidden");
     result.textContent = "0";
+    successMsg.classList.remove("show");
     return;
   }
 
   if (key === "DEL") {
+    quizBox.classList.add("hidden");
+
     if (cursorIndex > 0) {
       input = input.slice(0, cursorIndex - 1) + input.slice(cursorIndex);
       cursorIndex--;
     }
 
-    if (!input) result.textContent = "0";
+    result.textContent = input ? "" : "0";
     renderExpression();
     return;
   }
@@ -149,6 +143,7 @@ function insertText(text) {
   input = input.slice(0, cursorIndex) + text + input.slice(cursorIndex);
   cursorIndex += text.length;
 
+  result.textContent = "";
   renderExpression();
 }
 
@@ -185,31 +180,11 @@ function calculate() {
 
     answer = Number.isInteger(answer) ? answer : Number(answer.toFixed(6));
 
-    if (quizMode) {
-      correctAnswer = answer;
-      showQuizOptions(answer);
-    } else {
-      showFinalAnswer(answer);
-    }
+    correctAnswer = answer;
+    showQuizOptions(answer);
   } catch {
     showFahh();
   }
-}
-
-function showFinalAnswer(answer) {
-  result.textContent = answer;
-  showSuccess();
-
-  history.unshift(`${format(input)} = ${answer}`);
-  totalCalcs++;
-
-  input = String(answer);
-  cursorIndex = input.length;
-
-  saveData();
-  renderExpression();
-  renderHistory();
-  updateStats();
 }
 
 function showQuizOptions(answer) {
@@ -233,10 +208,11 @@ function generateOptions(answer) {
     let wrong;
 
     if (Number.isInteger(answer)) {
-      wrong = answer + Math.floor(Math.random() * 9) - 4;
-      if (wrong === answer) wrong += 2;
+      wrong = answer + Math.floor(Math.random() * 11) - 5;
+      if (wrong === answer) wrong += 3;
     } else {
-      wrong = Number((answer + Math.random() * 4 - 2).toFixed(2));
+      wrong = Number((answer + Math.random() * 6 - 3).toFixed(2));
+      if (wrong === answer) wrong += 1;
     }
 
     options.add(wrong);
@@ -308,19 +284,18 @@ function checkQuizAnswer(selected) {
       generateAutoQuestion();
       return;
     }
-  }, 850);
+
+    resetInput();
+    result.textContent = "0";
+  }, 900);
 }
 
 function createQuestionByDifficulty() {
-  let a;
-  let b;
-  let op;
-  let answer;
+  let a, b, op, answer;
 
   if (difficulty === "easy") {
     const ops = ["+", "-", "*"];
     op = ops[Math.floor(Math.random() * ops.length)];
-
     a = Math.floor(Math.random() * 10) + 1;
     b = Math.floor(Math.random() * 10) + 1;
   }
@@ -328,7 +303,6 @@ function createQuestionByDifficulty() {
   if (difficulty === "medium") {
     const ops = ["+", "-", "*"];
     op = ops[Math.floor(Math.random() * ops.length)];
-
     a = Math.floor(Math.random() * 50) + 10;
     b = Math.floor(Math.random() * 20) + 1;
   }
@@ -353,19 +327,10 @@ function createQuestionByDifficulty() {
     answer = Function(`"use strict"; return (${expressionText})`)();
   }
 
-  return {
-    expression: expressionText,
-    answer
-  };
+  return { expression: expressionText, answer };
 }
 
 function generateAutoQuestion() {
-  quizMode = true;
-  document.body.classList.add("quiz-mode");
-
-  quizModeBtn.classList.add("active");
-  calcModeBtn.classList.remove("active");
-
   const question = createQuestionByDifficulty();
 
   input = question.expression;
@@ -428,9 +393,7 @@ function startTimeChallenge(seconds) {
     timeLeft--;
     timeLeftEl.textContent = timeLeft;
 
-    if (timeLeft <= 0) {
-      finishChallenge();
-    }
+    if (timeLeft <= 0) finishChallenge();
   }, 1000);
 
   updateLives();
@@ -498,14 +461,12 @@ function showFahh() {
 
 function playFahhSound() {
   if (!soundOn || !errorSound) return;
-
   errorSound.currentTime = 0;
   errorSound.play().catch(() => {});
 }
 
 function playCorrectSound() {
   if (!soundOn || !correctSound) return;
-
   correctSound.currentTime = 0;
   correctSound.play().catch(() => {});
 }
@@ -513,116 +474,8 @@ function playCorrectSound() {
 function format(value) {
   return value
     .replace(/\*/g, "×")
-    .replace(/\//g, "÷")
-    .replace(/Math\.sqrt/g, "√")
-    .replace(/Math\.sin/g, "sin")
-    .replace(/Math\.cos/g, "cos")
-    .replace(/Math\.tan/g, "tan")
-    .replace(/Math\.log10/g, "log")
-    .replace(/Math\.log/g, "ln")
-    .replace(/Math\.PI/g, "π")
-    .replace(/Math\.E/g, "e");
+    .replace(/\//g, "÷");
 }
-
-functionButtons.forEach((btn) => {
-  btn.addEventListener("click", () => addFunction(btn.dataset.func));
-});
-
-function addFunction(func) {
-  result.classList.remove("error-text");
-
-  if (func === "sqrt") insertText("Math.sqrt(");
-  if (func === "square") insertText("**2");
-  if (func === "power") insertText("**");
-  if (func === "sin") insertText("Math.sin(");
-  if (func === "cos") insertText("Math.cos(");
-  if (func === "tan") insertText("Math.tan(");
-  if (func === "log") insertText("Math.log10(");
-  if (func === "ln") insertText("Math.log(");
-  if (func === "pi") insertText("Math.PI");
-  if (func === "e") insertText("Math.E");
-
-  if (func === "paren") {
-    const open = (input.match(/\(/g) || []).length;
-    const close = (input.match(/\)/g) || []).length;
-    insertText(open > close ? ")" : "(");
-  }
-
-  if (func === "fact") {
-    const leftSide = input.slice(0, cursorIndex);
-    const match = leftSide.match(/(\d+)$/);
-
-    if (!match) return showFahh();
-
-    const num = Number(match[0]);
-
-    if (num < 0 || num > 20) return showFahh();
-
-    const fact = String(factorial(num));
-
-    input =
-      input.slice(0, cursorIndex - match[0].length) +
-      fact +
-      input.slice(cursorIndex);
-
-    cursorIndex = cursorIndex - match[0].length + fact.length;
-    renderExpression();
-  }
-}
-
-function factorial(n) {
-  let ans = 1;
-
-  for (let i = 2; i <= n; i++) {
-    ans *= i;
-  }
-
-  return ans;
-}
-
-calcModeBtn.addEventListener("click", () => {
-  quizMode = false;
-  challengeActive = false;
-  timerActive = false;
-
-  clearInterval(timerInterval);
-
-  document.body.classList.remove("quiz-mode");
-
-  calcModeBtn.classList.add("active");
-  quizModeBtn.classList.remove("active");
-
-  playStatus.classList.add("hidden");
-  timerDisplay.classList.add("hidden");
-  quizBox.classList.add("hidden");
-
-  result.classList.remove("error-text");
-  result.textContent = "0";
-
-  resetInput();
-});
-
-quizModeBtn.addEventListener("click", () => {
-  quizMode = true;
-  challengeActive = false;
-  timerActive = false;
-
-  clearInterval(timerInterval);
-
-  document.body.classList.add("quiz-mode");
-
-  quizModeBtn.classList.add("active");
-  calcModeBtn.classList.remove("active");
-
-  playStatus.classList.add("hidden");
-  timerDisplay.classList.add("hidden");
-  quizBox.classList.add("hidden");
-
-  result.classList.remove("error-text");
-  result.textContent = "0";
-
-  resetInput();
-});
 
 challengeBtns.forEach((btn) => {
   btn.addEventListener("click", () => {
@@ -645,56 +498,39 @@ difficultyBtns.forEach((btn) => {
   });
 });
 
-copyBtn.addEventListener("click", async () => {
-  try {
-    await navigator.clipboard.writeText(result.textContent);
-    copyBtn.textContent = "Copied ✓";
-
-    setTimeout(() => {
-      copyBtn.textContent = "📋 Copy Result";
-    }, 1200);
-  } catch {
-    copyBtn.textContent = "Copy Failed";
-  }
-});
-
 soundBtn.addEventListener("click", () => {
   soundOn = !soundOn;
   soundBtn.textContent = soundOn ? "🔊" : "🔇";
   localStorage.setItem("soundOn", soundOn);
 });
 
+// Check if user has already seen the Game Menu hint
+if (localStorage.getItem("gameHintSeen")) {
+  gameMenuBtn.classList.add("hideHint");
+}
+
 themeSmall.addEventListener("click", () => {
   document.body.classList.toggle("dark");
 
   if (document.body.classList.contains("dark")) {
-    themeSmall.textContent = "☀️ Light";
+    themeSmall.textContent = "☀️";
     localStorage.setItem("theme", "dark");
   } else {
-    themeSmall.textContent = "🎨 Theme";
+    themeSmall.textContent = "🎨";
     localStorage.setItem("theme", "light");
   }
 });
 
-moreSmall.addEventListener("click", (e) => {
-  e.stopPropagation();
-  morePanel.classList.toggle("show");
-  gamePanel.classList.remove("show");
-  historyPanel.classList.remove("show");
-  resultPanel.classList.remove("show");
-});
-
-closeMore.addEventListener("click", (e) => {
-  e.stopPropagation();
-  morePanel.classList.remove("show");
-});
-
 gameMenuBtn.addEventListener("click", (e) => {
   e.stopPropagation();
+
   gamePanel.classList.toggle("show");
-  morePanel.classList.remove("show");
   historyPanel.classList.remove("show");
   resultPanel.classList.remove("show");
+
+  // Hide hint forever after first click
+  localStorage.setItem("gameHintSeen", "true");
+  gameMenuBtn.classList.add("hideHint");
 });
 
 closeGame.addEventListener("click", (e) => {
@@ -705,7 +541,6 @@ closeGame.addEventListener("click", (e) => {
 historyBtn.addEventListener("click", (e) => {
   e.stopPropagation();
   historyPanel.classList.toggle("show");
-  morePanel.classList.remove("show");
   gamePanel.classList.remove("show");
   resultPanel.classList.remove("show");
 });
@@ -735,7 +570,6 @@ clearHistory.addEventListener("click", () => {
 });
 
 function closeAllPanels() {
-  morePanel.classList.remove("show");
   gamePanel.classList.remove("show");
   historyPanel.classList.remove("show");
   resultPanel.classList.remove("show");
@@ -782,17 +616,3 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "ArrowRight") handleInput("RIGHT");
   if (e.key === "Escape") handleInput("AC");
 });
-
-function showSuccess() {
-  result.classList.add("success-glow");
-
-  successMsg.textContent =
-    successMessages[Math.floor(Math.random() * successMessages.length)];
-
-  successMsg.classList.add("show");
-
-  setTimeout(() => {
-    result.classList.remove("success-glow");
-    successMsg.classList.remove("show");
-  }, 900);
-}

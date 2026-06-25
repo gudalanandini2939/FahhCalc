@@ -23,12 +23,8 @@
           <button id="soundBtn">🔊</button>
           <button id="gameMenuBtn">🏆</button>
           <button id="historyBtn">🕘</button>
+          <button id="themeSmall">🎨</button>
         </div>
-      </div>
-
-      <div class="mode-switch">
-        <button id="calcModeBtn" class="active">🧮 Calculator</button>
-        <button id="quizModeBtn">🎮 Quiz</button>
       </div>
 
       <div id="playStatus" class="play-status hidden">
@@ -46,13 +42,6 @@
       <div id="quizBox" class="quiz-box hidden">
         <p id="questionInfo">Choose the correct answer 👇</p>
         <div id="answerOptions" class="answer-options"></div>
-      </div>
-
-      <button id="copyBtn" class="copy">📋 Copy Result</button>
-
-      <div class="small-actions">
-        <button id="themeSmall">🎨 Theme</button>
-        <button id="moreSmall">▦ More Functions</button>
       </div>
 
       <div class="cursor-actions">
@@ -88,40 +77,16 @@
 
     </section>
 
-    <section class="panel" id="morePanel">
-      <div class="panel-head">
-        <h2>More Functions</h2>
-        <button id="closeMore">×</button>
-      </div>
-
-      <div class="func-grid">
-        <button data-func="sqrt">√<small>Root</small></button>
-        <button data-func="square">x²<small>Square</small></button>
-        <button data-func="power">xʸ<small>Power</small></button>
-        <button data-func="sin">sin<small>Sine</small></button>
-        <button data-func="cos">cos<small>Cos</small></button>
-        <button data-func="tan">tan<small>Tan</small></button>
-        <button data-func="log">log<small>Base 10</small></button>
-        <button data-func="ln">ln<small>Natural</small></button>
-        <button data-func="fact">!<small>Factorial</small></button>
-        <button data-func="paren">( )<small>Bracket</small></button>
-        <button data-func="pi">π<small>Pi</small></button>
-        <button data-func="e">e<small>Euler</small></button>
-      </div>
-    </section>
-
     <section class="panel game-panel" id="gamePanel">
-    <div class="panel-head">
-      <div class="head-left">
-        <h2>Game Menu</h2>
-
-        <div class="best-inline">
-          🏆 Best Score: <span id="highScore">0</span>
+      <div class="panel-head">
+        <div class="head-left">
+          <h2>Game Menu</h2>
+          <div class="best-inline">
+            🏆 Best Score: <span id="highScore">0</span>
+          </div>
         </div>
+        <button id="closeGame">×</button>
       </div>
-
-      <button id="closeGame">×</button>
-    </div>
 
       <div class="game-section">
         <h3>🎚️ Difficulty</h3>
