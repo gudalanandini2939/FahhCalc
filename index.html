@@ -2,163 +2,1210 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <meta
+    name="description"
+    content="FahhCalc – a fun calculator with math challenges, themes, history and game modes."
+  />
+
   <title>FahhCalc</title>
+
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
 
-  <div class="symbols">
-    <span>π</span><span>√</span><span>∑</span><span>∞</span><span>β</span>
-    <span>±</span><span>%</span><span>≈</span><span>λ</span><span>Ω</span>
+  <!-- =========================
+       FLOATING MATH SYMBOLS
+  ========================== -->
+  <div class="symbols" aria-hidden="true">
+    <span>π</span>
+    <span>√</span>
+    <span>∑</span>
+    <span>∞</span>
+    <span>β</span>
+    <span>±</span>
+    <span>%</span>
+    <span>≈</span>
+    <span>λ</span>
+    <span>Ω</span>
   </div>
 
-  <main class="page">
+
+  <!-- =========================
+       MAIN APP
+  ========================== -->
+  <main class="page" id="appPage">
+
+    <!-- =========================
+         CALCULATOR
+    ========================== -->
     <section class="calculator" id="calculator">
 
-      <div class="top">
-        <h1>FahhCalc</h1>
+      <!-- Top Header -->
+      <header class="top">
+
+        <div class="brand">
+          <h1>FahhCalc</h1>
+          <span class="brand-dot" aria-hidden="true"></span>
+        </div>
 
         <div class="top-actions">
-          <button id="soundBtn">🔊</button>
-          <button id="gameMenuBtn">🏆</button>
-          <button id="historyBtn">🕘</button>
-          <button id="themeSmall">🎨</button>
-        </div>
-      </div>
 
+          <button
+            id="soundBtn"
+            class="top-action-btn"
+            type="button"
+            aria-label="Toggle sound"
+            title="Sound"
+          >
+            <span aria-hidden="true">🔊</span>
+          </button>
+
+          <button
+            id="gameMenuBtn"
+            class="top-action-btn drawer-trigger"
+            data-drawer-target="gamePanel"
+            type="button"
+            aria-label="Open game menu"
+            aria-controls="smartDrawer"
+            aria-expanded="false"
+            title="Game Menu"
+          >
+            <span aria-hidden="true">🏆</span>
+          </button>
+
+          <button
+            id="historyBtn"
+            class="top-action-btn drawer-trigger"
+            data-drawer-target="historyPanel"
+            type="button"
+            aria-label="Open history"
+            aria-controls="smartDrawer"
+            aria-expanded="false"
+            title="History"
+          >
+            <span aria-hidden="true">🕘</span>
+          </button>
+
+          <button
+            id="themeSmall"
+            class="top-action-btn drawer-trigger"
+            data-drawer-target="themePanel"
+            type="button"
+            aria-label="Open themes"
+            aria-controls="smartDrawer"
+            aria-expanded="false"
+            title="Themes"
+          >
+            <span aria-hidden="true">🎨</span>
+          </button>
+
+        </div>
+      </header>
+
+
+      <!-- =========================
+           GAME STATUS BAR
+      ========================== -->
       <div id="playStatus" class="play-status hidden">
-        <span id="livesDisplay">❤️❤️❤️❤️❤️</span>
-        <span id="timerDisplay" class="hidden">⏱️ <b id="timeLeft">30</b>s</span>
+
+        <div class="status-left">
+
+          <span
+            id="livesDisplay"
+            class="lives-display"
+            aria-label="Lives"
+          >
+            ❤️❤️❤️❤️❤️
+          </span>
+
+          <span id="timerDisplay" class="timer-display hidden">
+            ⏱️
+            <b id="timeLeft">30</b>s
+          </span>
+
+          <span id="streakDisplay" class="streak-display">
+            🔥
+            <b id="streakCount">0</b>
+          </span>
+
+        </div>
+
+        <div class="status-actions">
+
+          <button
+            id="pauseChallengeBtn"
+            type="button"
+            aria-label="Pause challenge"
+            title="Pause"
+          >
+            ⏸
+          </button>
+
+          <button
+            id="quitChallengeBtn"
+            type="button"
+          >
+            Quit
+          </button>
+
+        </div>
+
       </div>
 
-      <div class="screen">
-        <div id="expression"></div>
-        <div id="result">0</div>
+
+      <!-- =========================
+           CALCULATOR SCREEN
+      ========================== -->
+      <div class="screen" id="calculatorScreen">
+
+        <div
+          id="expression"
+          class="expression"
+          aria-live="polite"
+        ></div>
+
+        <div
+          id="result"
+          class="result"
+          aria-live="polite"
+        >
+          0
+        </div>
+
       </div>
 
-      <div id="successMsg"></div>
 
+      <!-- Correct / Wrong Feedback -->
+      <div
+        id="successMsg"
+        class="success-message"
+        aria-live="polite"
+      ></div>
+
+
+      <!-- =========================
+           COUNTDOWN
+      ========================== -->
+      <div
+        id="countdownBox"
+        class="countdown-box hidden"
+        aria-live="assertive"
+      >
+        <h2 id="countdownText">3</h2>
+      </div>
+
+
+      <!-- =========================
+           PAUSE SCREEN
+      ========================== -->
+      <div id="pauseBox" class="pause-box hidden">
+
+        <div class="pause-icon" aria-hidden="true">
+          ⏸
+        </div>
+
+        <h2>Paused</h2>
+
+        <p>Take a small break 😄</p>
+
+        <div class="pause-actions">
+
+          <button
+            id="resumeChallengeBtn"
+            type="button"
+          >
+            ▶ Resume
+          </button>
+
+          <button
+            id="pauseQuitBtn"
+            type="button"
+          >
+            ❌ Quit
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- =========================
+           QUIZ ANSWERS
+      ========================== -->
       <div id="quizBox" class="quiz-box hidden">
-        <p id="questionInfo">Choose the correct answer 👇</p>
-        <div id="answerOptions" class="answer-options"></div>
+
+        <p id="questionInfo">
+          Choose the correct answer 👇
+        </p>
+
+        <div
+          id="answerOptions"
+          class="answer-options"
+        ></div>
+
       </div>
 
+
+      <!-- =========================
+           CURSOR CONTROLS
+      ========================== -->
       <div class="cursor-actions">
-        <button data-key="LEFT">← Move Left</button>
-        <button data-key="RIGHT">Move Right →</button>
+
+        <button
+          data-key="LEFT"
+          type="button"
+          aria-label="Move cursor left"
+        >
+          ← Move Left
+        </button>
+
+        <button
+          data-key="RIGHT"
+          type="button"
+          aria-label="Move cursor right"
+        >
+          Move Right →
+        </button>
+
       </div>
 
+
+      <!-- =========================
+           CALCULATOR KEYS
+      ========================== -->
       <div class="keys">
-        <button class="danger" data-key="AC">AC</button>
-        <button data-key="DEL">DEL</button>
-        <button data-key="%">%</button>
-        <button class="operator" data-key="/">÷</button>
 
-        <button data-key="7">7</button>
-        <button data-key="8">8</button>
-        <button data-key="9">9</button>
-        <button class="operator" data-key="*">×</button>
+        <button
+          class="danger"
+          data-key="AC"
+          type="button"
+        >
+          AC
+        </button>
 
-        <button data-key="4">4</button>
-        <button data-key="5">5</button>
-        <button data-key="6">6</button>
-        <button class="operator" data-key="-">−</button>
+        <button
+          data-key="DEL"
+          type="button"
+        >
+          DEL
+        </button>
 
-        <button data-key="1">1</button>
-        <button data-key="2">2</button>
-        <button data-key="3">3</button>
-        <button class="operator" data-key="+">+</button>
+        <button
+          data-key="%"
+          type="button"
+        >
+          %
+        </button>
 
-        <button class="zero" data-key="0">0</button>
-        <button data-key=".">.</button>
-        <button class="equal" data-key="=">=</button>
+        <button
+          class="operator"
+          data-key="/"
+          type="button"
+          aria-label="Divide"
+        >
+          ÷
+        </button>
+
+
+        <button data-key="7" type="button">7</button>
+        <button data-key="8" type="button">8</button>
+        <button data-key="9" type="button">9</button>
+
+        <button
+          class="operator"
+          data-key="*"
+          type="button"
+          aria-label="Multiply"
+        >
+          ×
+        </button>
+
+
+        <button data-key="4" type="button">4</button>
+        <button data-key="5" type="button">5</button>
+        <button data-key="6" type="button">6</button>
+
+        <button
+          class="operator"
+          data-key="-"
+          type="button"
+          aria-label="Subtract"
+        >
+          −
+        </button>
+
+
+        <button data-key="1" type="button">1</button>
+        <button data-key="2" type="button">2</button>
+        <button data-key="3" type="button">3</button>
+
+        <button
+          class="operator"
+          data-key="+"
+          type="button"
+          aria-label="Add"
+        >
+          +
+        </button>
+
+
+        <button
+          class="zero"
+          data-key="0"
+          type="button"
+        >
+          0
+        </button>
+
+        <button
+          data-key="."
+          type="button"
+        >
+          .
+        </button>
+
+        <button
+          class="equal"
+          data-key="="
+          type="button"
+          aria-label="Calculate"
+        >
+          =
+        </button>
+
       </div>
 
     </section>
 
-    <section class="panel game-panel" id="gamePanel">
-      <div class="panel-head">
-        <div class="head-left">
-          <h2>Game Menu</h2>
-          <div class="best-inline">
-            🏆 Best Score: <span id="highScore">0</span>
+
+    <!-- =========================
+         SHARED DRAWER OVERLAY
+    ========================== -->
+    <div
+      id="drawerOverlay"
+      class="drawer-overlay"
+      aria-hidden="true"
+    ></div>
+
+
+    <!-- =========================
+         SMART SLIDING DRAWER
+    ========================== -->
+    <aside
+      id="smartDrawer"
+      class="smart-drawer"
+      aria-hidden="true"
+      aria-label="Application panel"
+    >
+
+      <!-- Mobile Bottom-Sheet Handle -->
+      <div class="drawer-handle" aria-hidden="true">
+        <span></span>
+      </div>
+
+
+      <!-- =========================
+           GAME MENU VIEW
+      ========================== -->
+      <section
+        class="drawer-view game-panel active"
+        id="gamePanel"
+        data-drawer-view="gamePanel"
+      >
+
+        <div class="panel-head">
+
+          <div class="head-left">
+
+            <div class="drawer-title-row">
+              <span class="drawer-title-icon" aria-hidden="true">
+                🏆
+              </span>
+
+              <h2>Game Menu</h2>
+            </div>
+
+            <div class="drawer-title-line"></div>
+
+            <div class="best-inline">
+              🏆 Best Score:
+              <span id="highScore">0</span>
+            </div>
+
           </div>
+
+          <button
+            id="closeGame"
+            class="drawer-close"
+            type="button"
+            aria-label="Close game menu"
+          >
+            ×
+          </button>
+
         </div>
-        <button id="closeGame">×</button>
+
+
+        <div class="drawer-scroll-content">
+
+          <!-- Difficulty -->
+          <section class="game-section">
+
+            <h3>🎚️ Difficulty</h3>
+
+            <div class="difficulty-grid">
+
+              <button
+                class="difficulty-btn active"
+                data-level="easy"
+                type="button"
+              >
+                <span>🟢</span>
+                <span>Easy</span>
+                <b class="selected-check">✓</b>
+              </button>
+
+              <button
+                class="difficulty-btn"
+                data-level="medium"
+                type="button"
+              >
+                <span>🟡</span>
+                <span>Medium</span>
+                <b class="selected-check">✓</b>
+              </button>
+
+              <button
+                class="difficulty-btn"
+                data-level="hard"
+                type="button"
+              >
+                <span>🔴</span>
+                <span>Hard</span>
+                <b class="selected-check">✓</b>
+              </button>
+
+            </div>
+
+          </section>
+
+
+          <!-- Question Challenge -->
+          <section class="game-section">
+
+            <h3>🏆 Question Challenge</h3>
+
+            <p class="section-description">
+              Complete a fixed number of questions.
+            </p>
+
+            <div class="challenge-grid">
+
+              <button data-challenge="5" type="button">
+                <span>5</span>
+                <small>Questions</small>
+              </button>
+
+              <button data-challenge="10" type="button">
+                <span>10</span>
+                <small>Questions</small>
+              </button>
+
+              <button data-challenge="20" type="button">
+                <span>20</span>
+                <small>Questions</small>
+              </button>
+
+              <button data-challenge="50" type="button">
+                <span>50</span>
+                <small>Questions</small>
+              </button>
+
+            </div>
+
+          </section>
+
+
+          <!-- Time Challenge -->
+          <section class="game-section">
+
+            <h3>⏱️ Time Challenge</h3>
+
+            <p class="section-description">
+              Solve as many questions as possible before time ends.
+            </p>
+
+            <div class="challenge-grid">
+
+              <button data-time="30" type="button">
+                <span>30</span>
+                <small>Seconds</small>
+              </button>
+
+              <button data-time="45" type="button">
+                <span>45</span>
+                <small>Seconds</small>
+              </button>
+
+              <button data-time="60" type="button">
+                <span>1</span>
+                <small>Minute</small>
+              </button>
+
+            </div>
+
+          </section>
+
+
+          <!-- Survival -->
+          <section class="game-section mode-card-section">
+
+            <div class="mode-card">
+
+              <div class="mode-card-icon" aria-hidden="true">
+                ❤️
+              </div>
+
+              <div class="mode-card-content">
+                <h3>Survival Mode</h3>
+                <p>Keep playing until all your lives are lost.</p>
+              </div>
+
+              <button id="survivalBtn" type="button">
+                Start
+              </button>
+
+            </div>
+
+          </section>
+
+
+          <!-- Endless -->
+          <section class="game-section mode-card-section">
+
+            <div class="mode-card">
+
+              <div class="mode-card-icon" aria-hidden="true">
+                ♾️
+              </div>
+
+              <div class="mode-card-content">
+                <h3>Endless Mode</h3>
+                <p>Continue solving questions without a limit.</p>
+              </div>
+
+              <button id="endlessBtn" type="button">
+                Start
+              </button>
+
+            </div>
+
+          </section>
+
+
+          <!-- Random -->
+          <section class="game-section mode-card-section">
+
+            <div class="mode-card">
+
+              <div class="mode-card-icon" aria-hidden="true">
+                🎲
+              </div>
+
+              <div class="mode-card-content">
+                <h3>Random Mode</h3>
+                <p>Play with a randomly selected challenge style.</p>
+              </div>
+
+              <button id="randomBtn" type="button">
+                Start
+              </button>
+
+            </div>
+
+          </section>
+
+
+          <!-- Boss -->
+          <section class="game-section mode-card-section">
+
+            <div class="mode-card">
+
+              <div class="mode-card-icon" aria-hidden="true">
+                👑
+              </div>
+
+              <div class="mode-card-content">
+                <h3>Boss Challenge</h3>
+                <p>Complete 50 challenging questions.</p>
+              </div>
+
+              <button id="bossBtn" type="button">
+                Start
+              </button>
+
+            </div>
+
+          </section>
+
+
+          <!-- Daily -->
+          <section class="game-section mode-card-section">
+
+            <div class="mode-card">
+
+              <div class="mode-card-icon" aria-hidden="true">
+                📅
+              </div>
+
+              <div class="mode-card-content">
+                <h3>Daily Challenge</h3>
+                <p>Complete today’s special math challenge.</p>
+              </div>
+
+              <button id="dailyBtn" type="button">
+                Play
+              </button>
+
+            </div>
+
+          </section>
+
+        </div>
+
+      </section>
+
+
+      <!-- =========================
+           HISTORY VIEW
+      ========================== -->
+      <section
+        class="drawer-view history-panel"
+        id="historyPanel"
+        data-drawer-view="historyPanel"
+      >
+
+        <div class="panel-head">
+
+          <div class="head-left">
+
+            <div class="drawer-title-row">
+              <span class="drawer-title-icon" aria-hidden="true">
+                🕘
+              </span>
+
+              <h2>History</h2>
+            </div>
+
+            <div class="drawer-title-line"></div>
+
+          </div>
+
+          <div class="panel-head-actions">
+
+            <button
+              id="clearHistory"
+              class="clear-history-btn"
+              type="button"
+            >
+              Clear
+            </button>
+
+            <button
+              id="closeHistory"
+              class="drawer-close"
+              type="button"
+              aria-label="Close history"
+            >
+              ×
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div class="drawer-scroll-content">
+
+          <!-- History Stats -->
+          <div class="stats">
+
+            <div class="stat-card">
+              <span class="stat-icon" aria-hidden="true">🧮</span>
+              <h3 id="totalCalcs">0</h3>
+              <p>Calculations</p>
+            </div>
+
+            <div class="stat-card">
+              <span class="stat-icon" aria-hidden="true">😵</span>
+              <h3 id="fahhCount">0</h3>
+              <p>Fahh Moments</p>
+            </div>
+
+            <div class="stat-card">
+              <span class="stat-icon" aria-hidden="true">🎯</span>
+              <h3 id="accuracy">100%</h3>
+              <p>Accuracy</p>
+            </div>
+
+          </div>
+
+
+          <!-- Weekly Graph -->
+          <div class="mini-graph">
+
+            <h3>This Week</h3>
+
+            <div class="graph-row">
+
+              <span>Correct</span>
+
+              <div class="graph-track">
+                <b id="correctGraph"></b>
+              </div>
+
+            </div>
+
+            <div class="graph-row">
+
+              <span>Wrong</span>
+
+              <div class="graph-track">
+                <b id="wrongGraph"></b>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- History Entries -->
+          <div
+            id="historyList"
+            class="history-list"
+            aria-live="polite"
+          >
+            <div class="empty-state">
+
+              <span class="empty-icon" aria-hidden="true">
+                🕘
+              </span>
+
+              <p class="empty">
+                No history yet
+              </p>
+
+              <small>
+                Your completed calculations will appear here.
+              </small>
+
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =========================
+           THEME VIEW
+      ========================== -->
+      <section
+        class="drawer-view theme-panel"
+        id="themePanel"
+        data-drawer-view="themePanel"
+      >
+
+        <div class="panel-head">
+
+          <div class="head-left">
+
+            <div class="drawer-title-row">
+              <span class="drawer-title-icon" aria-hidden="true">
+                🎨
+              </span>
+
+              <h2>Themes</h2>
+            </div>
+
+            <div class="drawer-title-line"></div>
+
+            <p class="drawer-subtitle">
+              Choose a style for your FahhCalc.
+            </p>
+
+          </div>
+
+          <button
+            id="closeTheme"
+            class="drawer-close"
+            type="button"
+            aria-label="Close themes"
+          >
+            ×
+          </button>
+
+        </div>
+
+
+        <div class="drawer-scroll-content">
+
+          <div class="theme-grid">
+
+            <button
+              class="theme-card active"
+              data-theme="sakura"
+              type="button"
+            >
+
+              <div class="theme-card-top">
+                <span class="theme-icon">🌸</span>
+                <span class="theme-name">Sakura</span>
+                <span class="theme-check">✓</span>
+              </div>
+
+              <div
+                class="theme-preview sakura-preview"
+                aria-hidden="true"
+              >
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+
+              <small>Soft pink and purple</small>
+
+            </button>
+
+
+            <button
+              class="theme-card"
+              data-theme="galaxy"
+              type="button"
+            >
+
+              <div class="theme-card-top">
+                <span class="theme-icon">🌌</span>
+                <span class="theme-name">Galaxy</span>
+                <span class="theme-check">✓</span>
+              </div>
+
+              <div
+                class="theme-preview galaxy-preview"
+                aria-hidden="true"
+              >
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+
+              <small>Deep cosmic colors</small>
+
+            </button>
+
+
+            <button
+              class="theme-card"
+              data-theme="forest"
+              type="button"
+            >
+
+              <div class="theme-card-top">
+                <span class="theme-icon">🍃</span>
+                <span class="theme-name">Forest</span>
+                <span class="theme-check">✓</span>
+              </div>
+
+              <div
+                class="theme-preview forest-preview"
+                aria-hidden="true"
+              >
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+
+              <small>Natural green shades</small>
+
+            </button>
+
+
+            <button
+              class="theme-card"
+              data-theme="ocean"
+              type="button"
+            >
+
+              <div class="theme-card-top">
+                <span class="theme-icon">🌊</span>
+                <span class="theme-name">Ocean</span>
+                <span class="theme-check">✓</span>
+              </div>
+
+              <div
+                class="theme-preview ocean-preview"
+                aria-hidden="true"
+              >
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+
+              <small>Cool blue gradients</small>
+
+            </button>
+
+
+            <button
+              class="theme-card"
+              data-theme="neon"
+              type="button"
+            >
+
+              <div class="theme-card-top">
+                <span class="theme-icon">🔥</span>
+                <span class="theme-name">Neon</span>
+                <span class="theme-check">✓</span>
+              </div>
+
+              <div
+                class="theme-preview neon-preview"
+                aria-hidden="true"
+              >
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+
+              <small>Bright electric glow</small>
+
+            </button>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </aside>
+
+
+    <!-- =========================
+         QUIT CONFIRMATION MODAL
+    ========================== -->
+    <section
+      class="modal-panel confirm-panel"
+      id="confirmQuitPanel"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="quitDialogTitle"
+      aria-hidden="true"
+    >
+
+      <div class="modal-icon" aria-hidden="true">
+        ⚠️
       </div>
 
-      <div class="game-section">
-        <h3>🎚️ Difficulty</h3>
-        <div class="difficulty-grid">
-          <button class="difficulty-btn active" data-level="easy">Easy</button>
-          <button class="difficulty-btn" data-level="medium">Medium</button>
-          <button class="difficulty-btn" data-level="hard">Hard</button>
-        </div>
+      <div class="panel-head">
+        <h2 id="quitDialogTitle">
+          Quit Challenge?
+        </h2>
       </div>
 
-      <div class="game-section">
-        <h3>🏆 Challenge Mode</h3>
-        <div class="challenge-grid">
-          <button data-challenge="5">5 Questions</button>
-          <button data-challenge="10">10 Questions</button>
-          <button data-challenge="20">20 Questions</button>
-          <button data-challenge="50">50 Questions</button>
-        </div>
+      <p class="confirm-text">
+        You will lose your current challenge progress.
+      </p>
+
+      <div class="confirm-actions">
+
+        <button
+          id="cancelQuitBtn"
+          type="button"
+        >
+          Continue Playing
+        </button>
+
+        <button
+          id="confirmQuitBtn"
+          class="danger-confirm"
+          type="button"
+        >
+          Quit Challenge
+        </button>
+
       </div>
 
-      <div class="game-section">
-        <h3>⏱️ Time Challenge</h3>
-        <div class="challenge-grid">
-          <button data-time="30">30 Seconds</button>
-          <button data-time="45">45 Seconds</button>
-          <button data-time="60">1 Minute</button>
-        </div>
-      </div>
     </section>
 
-    <section class="panel result-panel" id="resultPanel">
+
+    <!-- =========================
+         RESULT MODAL
+    ========================== -->
+    <section
+      class="modal-panel result-panel"
+      id="resultPanel"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="resultTitle"
+      aria-hidden="true"
+    >
+
       <div class="panel-head">
-        <h2>Challenge Complete 🎉</h2>
-        <button id="closeResult">×</button>
+
+        <div>
+          <span class="result-trophy" aria-hidden="true">
+            🏆
+          </span>
+
+          <h2 id="resultTitle">
+            Challenge Complete
+          </h2>
+        </div>
+
+        <button
+          id="closeResult"
+          type="button"
+          aria-label="Close results"
+        >
+          ×
+        </button>
+
       </div>
+
+
+      <div
+        id="newHighScoreMsg"
+        class="new-high-score hidden"
+      >
+        🎉 NEW HIGH SCORE!
+      </div>
+
 
       <div class="result-summary">
-        <div><h3 id="finalCorrect">0</h3><p>Correct</p></div>
-        <div><h3 id="finalWrong">0</h3><p>Wrong</p></div>
-        <div><h3 id="finalAccuracy">0%</h3><p>Accuracy</p></div>
+
+        <div class="result-stat correct-stat">
+          <span aria-hidden="true">✅</span>
+          <h3 id="finalCorrect">0</h3>
+          <p>Correct</p>
+        </div>
+
+        <div class="result-stat wrong-stat">
+          <span aria-hidden="true">❌</span>
+          <h3 id="finalWrong">0</h3>
+          <p>Wrong</p>
+        </div>
+
+        <div class="result-stat accuracy-stat">
+          <span aria-hidden="true">🎯</span>
+          <h3 id="finalAccuracy">0%</h3>
+          <p>Accuracy</p>
+        </div>
+
       </div>
+
+
+      <div class="extra-summary">
+
+        <p>
+          <span>⭐ Difficulty</span>
+          <b id="finalDifficulty">Easy</b>
+        </p>
+
+        <p>
+          <span>⏱️ Time Taken</span>
+          <b id="finalTimeTaken">0s</b>
+        </p>
+
+        <p>
+          <span>🔥 Longest Streak</span>
+          <b id="finalBestStreak">0</b>
+        </p>
+
+        <p>
+          <span>🏆 Best Score</span>
+          <b id="finalBestScore">0</b>
+        </p>
+
+      </div>
+
 
       <div class="hearts-result">
+
         <p>Lives Left</p>
-        <h3 id="finalLives">❤️❤️❤️❤️❤️</h3>
+
+        <h3 id="finalLives">
+          ❤️❤️❤️❤️❤️
+        </h3>
+
       </div>
 
-      <button id="playAgainBtn" class="play-again">Play Again</button>
+
+      <div class="result-actions">
+
+        <button
+          id="shareScoreBtn"
+          class="share-score"
+          type="button"
+        >
+          Share Score
+        </button>
+
+        <button
+          id="playAgainBtn"
+          class="play-again"
+          type="button"
+        >
+          Play Again
+        </button>
+
+      </div>
+
     </section>
 
-    <section class="panel history-panel" id="historyPanel">
-      <div class="panel-head">
-        <h2>History</h2>
-        <button id="clearHistory">Clear</button>
-        <button id="closeHistory">×</button>
-      </div>
 
-      <div class="stats">
-        <div><h3 id="totalCalcs">0</h3><p>Calculations</p></div>
-        <div><h3 id="fahhCount">0</h3><p>Fahh Moments</p></div>
-        <div><h3 id="accuracy">100%</h3><p>Accuracy</p></div>
-      </div>
+    <!-- Shared Modal Overlay -->
+    <div
+      id="modalOverlay"
+      class="modal-overlay"
+      aria-hidden="true"
+    ></div>
 
-      <div id="historyList">
-        <p class="empty">No history yet</p>
-      </div>
-    </section>
   </main>
 
-  <audio id="errorSound" src="fahh.mp3" preload="auto"></audio>
-  <audio id="correctSound" src="correct.mp3" preload="auto"></audio>
 
+  <!-- =========================
+       AUDIO FILES
+  ========================== -->
+  <audio
+    id="errorSound"
+    src="fahh.mp3"
+    preload="auto"
+  ></audio>
+
+  <audio
+    id="clickSound"
+    src="click.mp3"
+    preload="auto"
+  ></audio>
+
+  <audio
+    id="correctSound"
+    src="correct.mp3"
+    preload="auto"
+  ></audio>
+
+
+  <!-- =========================
+       JAVASCRIPT
+  ========================== -->
   <script src="index.js"></script>
+
 </body>
 </html>
