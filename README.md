@@ -1,6 +1,6 @@
 # 🧮 FahhCalc
 
-![FahhCalc Home](screenshot.png)
+![FahhCalc Home](fahhcalc-home.png)
 
 A modern and interactive calculator built using **HTML, CSS, and JavaScript**. FahhCalc combines everyday calculations with engaging math challenges, multiple game modes, sound effects, themes, and a fully responsive user interface.
 
